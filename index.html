@@ -1,0 +1,1038 @@
+<title>Piano Fotovoltaico Magolfa 32</title>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f3f5f2;
+    --surface: #ffffff;
+    --surface-2: #e9ede8;
+    --ink: #141a17;
+    --ink-2: #4b5651;
+    --muted: #7c867f;
+    --line: #dde2dd;
+    --line-strong: #c4ccc6;
+    --accent: #0f5e4a;
+    --accent-soft: #e2f0ea;
+    --accent-ink: #ffffff;
+    --s-bill: #2a78d6;
+    --s-pv: #eb6834;
+    --s-save: #1baf7a;
+    --s-save-soft: rgba(27,175,122,.16);
+    --good: #0ca30c;
+    --good-text: #006300;
+    --critical: #d03b3b;
+    --warn: #b9770e;
+    --warn-soft: #fbf1df;
+    --shadow: 0 1px 2px rgba(20,26,23,.06), 0 8px 24px -12px rgba(20,26,23,.18);
+    --font-display: "Bricolage Grotesque", "Public Sans", system-ui, sans-serif;
+    --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0e1110;
+      --surface: #171b19;
+      --surface-2: #1f2522;
+      --ink: #f1f4f1;
+      --ink-2: #b6bfb9;
+      --muted: #86908a;
+      --line: #2a312d;
+      --line-strong: #3a433e;
+      --accent: #3fb391;
+      --accent-soft: #163229;
+      --accent-ink: #08130f;
+      --s-bill: #3987e5;
+      --s-pv: #d95926;
+      --s-save: #199e70;
+      --s-save-soft: rgba(25,158,112,.2);
+      --good: #0ca30c;
+      --good-text: #3fcf3f;
+      --critical: #e66767;
+      --warn: #e0a33a;
+      --warn-soft: #2d2415;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0e1110;
+    --surface: #171b19;
+    --surface-2: #1f2522;
+    --ink: #f1f4f1;
+    --ink-2: #b6bfb9;
+    --muted: #86908a;
+    --line: #2a312d;
+    --line-strong: #3a433e;
+    --accent: #3fb391;
+    --accent-soft: #163229;
+    --accent-ink: #08130f;
+    --s-bill: #3987e5;
+    --s-pv: #d95926;
+    --s-save: #199e70;
+    --s-save-soft: rgba(25,158,112,.2);
+    --good: #0ca30c;
+    --good-text: #3fcf3f;
+    --critical: #e66767;
+    --warn: #e0a33a;
+    --warn-soft: #2d2415;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  h1, h2, h3 { margin: 0; text-wrap: balance; font-family: var(--font-display); }
+  p { margin: 0; }
+  button { font: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .app {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 0;
+    min-height: 100vh;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .side {
+    background: var(--surface);
+    border-right: 1px solid var(--line);
+    padding: 22px 20px 40px;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .side-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+  .side-head h2 { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+  .side-sub { color: var(--muted); font-size: 12.5px; margin-bottom: 16px; }
+  .scenarios { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+  .chip {
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink-2);
+    border-radius: 999px;
+    padding: 5px 11px;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip.ghost { border-style: dashed; }
+
+  details.group { border-top: 1px solid var(--line); padding: 4px 0 8px; }
+  details.group:last-of-type { border-bottom: 1px solid var(--line); }
+  details.group > summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0 8px;
+    font-family: var(--font-display);
+    font-weight: 600; font-size: 14px; letter-spacing: .01em;
+  }
+  details.group > summary::-webkit-details-marker { display: none; }
+  details.group > summary::after {
+    content: ""; width: 8px; height: 8px;
+    border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted);
+    transform: rotate(45deg); margin-right: 4px; transition: transform .15s;
+  }
+  details.group[open] > summary::after { transform: rotate(225deg); margin-top: 4px; }
+  .fields { display: grid; gap: 12px; padding-bottom: 6px; }
+
+  .field label { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 13px; color: var(--ink-2); font-weight: 500; }
+  .field .derived { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .field .row { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+  .field input[type="number"] {
+    width: 100%; min-width: 0;
+    font: inherit; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums;
+    color: var(--ink); background: var(--surface-2);
+    border: 1px solid transparent; border-radius: 6px; padding: 7px 9px;
+  }
+  .field input[type="number"]:focus { border-color: var(--accent); background: var(--surface); outline: none; }
+  .field .unit { color: var(--muted); font-size: 12.5px; white-space: nowrap; min-width: 44px; }
+  .field input[type="range"] { width: 100%; margin: 6px 0 0; accent-color: var(--accent); }
+  .field .hint { font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.35; }
+  .field .hint.warn { color: var(--warn); }
+  .seg { display: flex; border: 1px solid var(--line-strong); border-radius: 7px; overflow: hidden; margin-top: 5px; }
+  .seg button { flex: 1; border: 0; background: transparent; color: var(--ink-2); padding: 7px 6px; font-size: 13px; font-weight: 600; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+
+  /* ---------- Main ---------- */
+  .main { padding: 28px 36px 64px; min-width: 0; }
+  .wrap { max-width: 1040px; }
+  .eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .hero { position: relative; padding: 26px 28px 22px; margin: -4px -8px 0; border-radius: 14px; background: linear-gradient(160deg, var(--accent-soft), transparent 70%); overflow: hidden; }
+  .titlebar { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-top: 6px; }
+  h1 { font-size: clamp(30px, 3.6vw, 44px); font-weight: 700; letter-spacing: -.025em; line-height: 1.02; }
+  .lede { color: var(--ink-2); max-width: 66ch; margin-top: 12px; font-size: 16px; line-height: 1.55; }
+  .hint-vars { color: var(--muted); font-size: 14px; }
+  .hint-vars a { color: var(--accent); font-weight: 600; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 18px; }
+  .fact { display: flex; flex-direction: column; }
+  .fact b { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -.01em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .fact span { font-size: 12px; color: var(--muted); }
+  .mosaic { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 18px; max-width: 560px; }
+  .mosaic i { width: 10px; height: 14px; border-radius: 2px; background: var(--s-pv); opacity: .85; }
+  .mosaic i.g { margin-left: 8px; }
+  .three { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+  .why { position: relative; padding-top: 18px; }
+  .why h3 { font-size: 16px; font-weight: 600; margin: 8px 0 8px; }
+  .why p { color: var(--ink-2); font-size: 14px; line-height: 1.55; }
+  .why-n { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--accent); background: var(--accent-soft); width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
+  .fam { text-align: left; }
+  .fam .f-label { font-size: 13px; color: var(--ink-2); font-weight: 500; }
+  .fam .f-value { font-family: var(--font-display); font-size: 30px; font-weight: 700; letter-spacing: -.02em; margin-top: 6px; line-height: 1.1; }
+  .fam .f-sub { font-size: 12.5px; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+  .fam.best { border-color: var(--s-save); }
+  .fam.best .f-value { color: var(--good-text); }
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: step; display: grid; gap: 12px; }
+  .steps li { position: relative; padding-left: 44px; color: var(--ink-2); font-size: 14.5px; line-height: 1.55; max-width: 72ch; }
+  .steps li b { color: var(--ink); }
+  .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-family: var(--font-display); font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  .faq { display: grid; gap: 8px; }
+  .faq details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0 18px; }
+  .faq summary { cursor: pointer; padding: 14px 0; font-weight: 600; font-size: 15px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; font-family: var(--font-display); font-size: 20px; color: var(--accent); flex-shrink: 0; }
+  .faq details[open] summary::after { content: "−"; }
+  .faq .a { padding: 0 0 16px; color: var(--ink-2); font-size: 14.5px; line-height: 1.6; max-width: 72ch; }
+  .faq .a b { color: var(--ink); }
+  .pill { display: inline-flex; align-items: center; gap: 6px; background: var(--warn-soft); color: var(--warn); border-radius: 999px; padding: 5px 11px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+  .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  .kpis { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 12px; margin-top: 26px; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px 12px; min-width: 0; }
+  .kpi .k-label { font-size: 12.5px; color: var(--ink-2); font-weight: 500; }
+  .kpi .k-value { font-family: var(--font-display); font-size: 27px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; margin-top: 6px; overflow-wrap: anywhere; }
+  .kpi .k-sub { font-size: 12px; color: var(--muted); margin-top: 5px; }
+  .kpi.hero { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); grid-row: span 2; display: flex; flex-direction: column; justify-content: center; }
+  .kpi.hero .k-label, .kpi.hero .k-sub { color: var(--accent-ink); opacity: .82; }
+  .kpi.hero .k-value { font-size: 40px; }
+
+  .story { margin-top: 22px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; padding: 18px 22px; }
+  .story h2 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .story p { max-width: 70ch; color: var(--ink); font-size: 15.5px; line-height: 1.6; }
+  .story p + p { margin-top: 8px; }
+  .story b { font-weight: 700; }
+
+  section.block { margin-top: 30px; }
+  section.block > header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin-bottom: 10px; }
+  section.block h2 { font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
+  section.block .sub { color: var(--muted); font-size: 13px; max-width: 70ch; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .two { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--ink-2); margin-bottom: 8px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .legend i.line { height: 0; border-top: 2px solid; border-radius: 0; }
+  .legend i.dash { height: 0; border-top: 2px dashed; border-radius: 0; }
+
+  .chart { width: 100%; height: auto; display: block; }
+  .chart text { font-family: var(--font-body); font-size: 12px; fill: var(--muted); }
+  .chart text.val { fill: var(--ink-2); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .chart text.strong { fill: var(--ink); font-weight: 700; }
+  .chart .grid { stroke: var(--line); stroke-width: 1; }
+  .chart .axis { stroke: var(--line-strong); stroke-width: 1; }
+  .chart .hit { fill: transparent; }
+
+  .tip {
+    position: fixed; z-index: 10; pointer-events: none;
+    background: var(--ink); color: var(--bg);
+    padding: 7px 10px; border-radius: 6px; font-size: 12.5px; line-height: 1.35;
+    box-shadow: var(--shadow); max-width: 260px; display: none; white-space: nowrap;
+  }
+  .tip b { font-weight: 700; }
+
+  .fin { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 12px; }
+  .fin .box { background: var(--surface-2); border-radius: 8px; padding: 12px 14px; }
+  .fin .box .lab { font-size: 12.5px; color: var(--ink-2); }
+  .fin .box .num { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-top: 3px; letter-spacing: -.01em; }
+  .fin .box .num.pos { color: var(--good-text); }
+  .fin .box .num.neg { color: var(--critical); }
+  .bars2 { margin-top: 14px; display: grid; gap: 8px; }
+  .chartnote { margin: 10px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--muted); }
+  .cassa { margin-top: 16px; background: var(--warn-soft); border-radius: 8px; padding: 12px 14px; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); max-width: 78ch; }
+  .cassa b { color: var(--ink); }
+  .bar-row { display: grid; grid-template-columns: 150px 1fr 90px; align-items: center; gap: 10px; font-size: 13px; }
+  .bar-row .track { height: 14px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+  .bar-row .fill { height: 100%; border-radius: 4px; }
+  .bar-row .n { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 860px; font-size: 13px; }
+  th, td { padding: 8px 10px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; border-bottom: 1px solid var(--line); }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface-2); position: sticky; top: 0; font-size: 12px; }
+  th:first-child, td:first-child { text-align: left; }
+  td.neg { color: var(--critical); }
+  td.cum { font-weight: 700; }
+  tr.pay td { background: var(--s-save-soft); }
+  tfoot td { font-weight: 700; background: var(--surface-2); }
+
+  .assump { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px 24px; }
+  .assump dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 13.5px; }
+  .assump dt { color: var(--ink-2); }
+  .assump dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+  .assump h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .03em; padding: 1px 7px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
+  .tag.bill { background: rgba(42,120,214,.13); color: var(--s-bill); }
+  .tag.todo { background: var(--warn-soft); color: var(--warn); }
+  .tag.norm { background: var(--accent-soft); color: var(--accent); }
+  .sources { margin-top: 14px; font-size: 13px; color: var(--ink-2); }
+  .sources ul { margin: 6px 0 0; padding-left: 18px; }
+  .sources li { margin: 3px 0; }
+  .foot { margin-top: 36px; color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 14px; max-width: 70ch; }
+
+  .only-mobile { display: none; }
+  @media (max-width: 960px) {
+    .only-mobile { display: inline; }
+    .only-desktop { display: none; }
+    .app { grid-template-columns: 1fr; }
+    .side { position: static; max-height: none; border-right: 0; border-top: 1px solid var(--line); order: 2; }
+    .main { order: 1; padding: 16px 16px 40px; }
+    .hero { margin: 0; padding: 20px 18px 18px; }
+    .kpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .kpi.hero { grid-row: auto; grid-column: span 2; }
+    .two, .three, .assump { grid-template-columns: 1fr; }
+    .fin { grid-template-columns: 1fr 1fr; }
+    .bar-row { grid-template-columns: 90px 1fr 80px; }
+  }
+  @media (max-width: 520px) {
+    .kpis { grid-template-columns: 1fr; }
+    .kpi.hero { grid-column: auto; grid-row: auto; }
+    .fin { grid-template-columns: 1fr; }
+    h1 { font-size: 30px; }
+  }
+  @media print {
+    .side, .tip, .scenarios { display: none !important; }
+    .app { grid-template-columns: 1fr; }
+    .main { padding: 0; }
+    .kpi.hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    section.block { break-inside: avoid; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="app">
+  <aside class="side" id="variabili" aria-label="Variabili del modello">
+    <div class="side-head"><h2>Variabili</h2><span style="display:flex;gap:6px"><button class="chip ghost" id="btnShare" type="button">Copia link</button><button class="chip ghost" id="btnReset" type="button">Ripristina</button></span></div>
+    <p class="side-sub">Cambia un valore e tutta la pagina si aggiorna. Le modifiche restano salvate su questo dispositivo e finiscono nel link, così puoi condividere il tuo scenario.</p>
+    <div class="scenarios" role="group" aria-label="Scenari">
+      <button class="chip" type="button" data-preset="sipro">Preventivo SIPRO 61 kWp</button>
+      <button class="chip" type="button" data-preset="ie111">Offerta IE 111 kWp (2025)</button>
+    </div>
+    <div id="groups"></div>
+  </aside>
+
+  <main class="main">
+    <div class="wrap">
+      <header class="hero">
+        <div class="eyebrow">Condominio Magolfa 32 · Milano · Navigli</div>
+        <div class="titlebar">
+          <h1>Piano Fotovoltaico Magolfa 32</h1>
+          <span class="pill">Preventivo SIPRO dell'11/09/2026 · bozza per l'assemblea</span>
+        </div>
+        <p class="lede">Il tetto del nostro palazzo può produrre una parte della corrente che già usiamo ogni giorno per la pompa di calore, gli ascensori e le autoclavi. Questa pagina spiega quanto costa, quanto si risparmia e in quanto tempo si ripaga. <span class="hint-vars">Ogni numero si aggiorna cambiando le variabili <span class="only-desktop">nel pannello a sinistra</span><a class="only-mobile" href="#variabili">in fondo alla pagina</a>.</span></p>
+        <div class="facts" id="facts"></div>
+        <div class="mosaic" id="mosaic" aria-hidden="true"></div>
+      </header>
+
+      <div class="kpis" id="kpis"></div>
+
+      <div class="story" id="story"></div>
+
+      <section class="block">
+        <header><h2>Perché proprio qui</h2><p class="sub">Tre cose che rendono questo palazzo adatto, più di tanti altri.</p></header>
+        <div class="three">
+          <div class="card why"><div class="why-n">1</div><h3>Consumiamo di giorno, tutto l'anno</h3><p>La pompa di calore centralizzata lavora quando c'è il sole: d'inverno per scaldare, d'estate per raffrescare. Nel maggio 2026 il palazzo ha usato 19.685 kWh. L'energia del tetto trova subito chi la consuma, senza batterie.</p></div>
+          <div class="card why"><div class="why-n">2</div><h3>Il tetto è pronto</h3><p>Coperture in ottime condizioni, falde quasi piane (10°) su cui i pannelli stanno appoggiati e non si vedono dalla strada. Nessun lavoro di rifacimento in vista che costringa a smontare.</p></div>
+          <div class="card why"><div class="why-n">3</div><h3>Banca e condomini già d'accordo</h3><p>La banca del condominio aveva già approvato il finanziamento l'anno scorso, su un importo maggiore. E il gruppo di autoconsumo collettivo era stato presentato in assemblea: con 52 famiglie dentro, l'energia in eccesso non si spreca.</p></div>
+        </div>
+      </section>
+
+      <section class="block">
+        <header><h2>Cosa cambia per ogni famiglia</h2><p class="sub">Spesa media di corrente condominiale per unità abitativa, IVA inclusa, divisa per le 52 famiglie. Sono medie: la ripartizione vera segue i millesimi.</p></header>
+        <div class="three" id="family"></div>
+      </section>
+
+      <section class="block">
+        <header><h2>La bolletta, prima e dopo</h2><p class="sub">Spesa annua di energia elettrica del condominio, IVA inclusa, primo anno di esercizio.</p></header>
+        <div class="two">
+          <div class="card">
+            <div class="legend"><span><i style="background:var(--s-bill)"></i>Oggi</span><span><i style="background:var(--s-save)"></i>Con il fotovoltaico</span></div>
+            <div id="chartBill"></div>
+          </div>
+          <div class="card">
+            <div class="legend"><span><i style="background:var(--s-bill);opacity:.35"></i>Consumo del palazzo</span><span><i style="background:var(--s-bill);opacity:.7"></i>di cui di giorno nei feriali (F1)</span><span><i style="background:var(--s-pv)"></i>Produzione del tetto</span></div>
+            <div id="chartMonth"></div>
+            <p class="chartnote" id="monthNote"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <header><h2>Quando rientra l'investimento</h2><p class="sub">Soldi spesi e soldi recuperati, anno dopo anno. Quando la linea supera lo zero l'impianto si è ripagato: da lì in poi è guadagno.</p></header>
+        <div class="card">
+          <div class="legend"><span><i class="line" style="border-color:var(--s-save)"></i>Tutto in cassa</span><span><i class="dash" style="border-color:var(--s-pv)"></i>Con finanziamento</span></div>
+          <div id="chartCum"></div>
+        </div>
+      </section>
+
+      <section class="block">
+        <header><h2>Con il finanziamento</h2><p class="sub">La rata si confronta direttamente con quello che si risparmia ogni mese. L'acconto in cassa si regola a sinistra: più acconto, rata più bassa.</p></header>
+        <div class="card" id="finCard"></div>
+      </section>
+
+      <section class="block">
+        <header><h2>Anno per anno</h2><p class="sub">Tutti i flussi in euro, IVA inclusa. La riga evidenziata è l'anno in cui l'investimento è rientrato.</p></header>
+        <div class="tablewrap" id="tableWrap"></div>
+      </section>
+
+      <section class="block">
+        <header><h2>Cosa succede adesso</h2><p class="sub">Nessuna decisione si prende oggi. I passi, in ordine.</p></header>
+        <div class="card">
+          <ol class="steps">
+            <li><b>Assemblea ordinaria del 14 settembre</b> — il progetto viene presentato; si chiede solo di andare avanti.</li>
+            <li><b>Sopralluogo tecnico di SIPRO, gratuito</b> — i tecnici salgono sul tetto e definiscono l'impianto e il prezzo al centesimo. Il preventivo attuale (valido 30 giorni) viene confermato o aggiornato.</li>
+            <li><b>Assemblea straordinaria entro fine ottobre</b> — con l'offerta definitiva in mano si delibera l'impianto, la modalità di pagamento e l'adesione al gruppo di autoconsumo.</li>
+            <li><b>Finanziamento con la banca del condominio</b> — la stessa che l'anno scorso aveva già approvato la pratica.</li>
+            <li><b>Installazione entro 120 giorni</b> dal primo pagamento, poi allaccio, collaudo e pratica GSE per l'autoconsumo collettivo.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="block">
+        <header><h2>Domande frequenti</h2><p class="sub">Le domande che di solito escono in assemblea, con le risposte.</p></header>
+        <div class="faq" id="faq"></div>
+      </section>
+
+      <section class="block">
+        <header><h2>Ipotesi e fonti</h2><p class="sub">Da dove vengono i numeri. Le voci segnate "da confermare" sono stime in attesa dell'offerta definitiva.</p></header>
+        <div class="card">
+          <div class="assump" id="assump"></div>
+          <div class="sources">
+            <b>Fonti</b>
+            <ul>
+              <li>Preventivo SiPro Energy n. FTV-2600473a dell'11/09/2026: impianto da 61,18 kWp, 86.880 € + IVA 10%, 6 inverter, garanzia 30 anni moduli / 10 anni inverter; pagamento 20% alla firma, 30% al materiale, 30% a inizio lavori, 20% al collaudo; installazione entro 120 giorni dal primo pagamento; validità 30 giorni. Esclusi: meter e connext (500 €), chiavetta 4G (300 €), verifica statica della copertura, spese di allaccio Unareti.</li>
+              <li>Bolletta Duferco Energia del condominio, maggio 2026 (consumo annuo 320.939 kWh, spesa annua 94.429,66 € + IVA, fornitura BT 380 V, 150 kW).</li>
+              <li>Producibilità del tetto: progetto preliminare IniziativEnergetiche n. 0769/2025 (132.590 kWh/anno per 111,6 kWp, pari a 1.188 kWh per kWp).</li>
+              <li>Condizioni di finanziamento: simulazioni di prestito chirografario della banca del condominio del 18/12/2025 su 125.000 € in 61 mesi — tasso fisso 5,90% (TAEG 6,40%, rata 2.434 €) o variabile Euribor 3M + 3,00% = 5,04% (TAEG 5,47%, rata 2.381 €); istruttoria 250 €, imposta sostitutiva 0,25%, incasso rata 2,75 €. Qui riportate in proporzione al nuovo importo.</li>
+              <li>Detrazione fiscale: 50% per abitazione principale, 36% per gli altri immobili, in 10 rate annuali — <a href="https://www.enpal.com/it/fotovoltaico/fotovoltaico-condominio-guida" target="_blank" rel="noopener">guida fotovoltaico in condominio 2026</a>.</li>
+              <li>Tariffa premio sull'energia condivisa (DM CACER): fino a 120 €/MWh per impianti fino a 200 kW, più 10 €/MWh per la Lombardia; richiedibile fino al 31/12/2027, dura 20 anni — <a href="https://www.reteagevolazioni.it/comunita-energetiche-rinnovabli-incentivi/" target="_blank" rel="noopener">tariffa incentivante 2026–2027</a>, <a href="https://www.transizioneenergetica.eu/autoconsumo-collettivo-condominio-2026/" target="_blank" rel="noopener">autoconsumo collettivo in condominio 2026</a>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <p class="foot">Modello preliminare a scopo di valutazione. I valori di produzione, risparmio e incentivo sono stime basate sulle ipotesi indicate e andranno confermati con l'offerta del fornitore, il commercialista del condominio e le regole GSE in vigore al momento della domanda.</p>
+    </div>
+  </main>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------------- Defaults & presets ---------------- */
+  const DEFAULTS = {
+    kwp: 61.18, costo: 86880, extra: 2000, iva: 10, resa: 1188, degrado: 0.4, om: 900, orizzonte: 25,
+    consumo: 320939, spesa: 94430, fissa: 6118, rincaro: 2, autoconsumo: 90,
+    condivisa: 90, premio: 0.12, restituzione: 0.009, vendita: 0.08,
+    detrazione: 36,
+    pagamento: 'finanziamento', acconto: 0, tipoTasso: 'fisso', tasso: 5.9, durata: 60, istruttoria: 250,
+    unita: 52
+  };
+  // Condizioni della simulazione bancaria del 18/12/2025 (125.000 € in 61 mesi)
+  const BANCA = { fisso: 5.9, variabile: 5.04, impostaSostitutiva: 0.0025, incassoRata: 2.75 };
+  const PRESETS = {
+    sipro: Object.assign({}, DEFAULTS),
+    ie111: Object.assign({}, DEFAULTS, { kwp: 111.6, costo: 122100, extra: 2550, autoconsumo: 80, om: 1400 })
+  };
+  // Gruppi di pannelli del layout SIPRO (133 moduli da 460 W su 6 porzioni di tetto)
+  const SIPRO_GROUPS = [26, 27, 15, 17, 20, 28];
+  // Forma mensile della produzione (progetto IE 0769/2025, 111,6 kWp), normalizzata
+  const MONTH_SHAPE = [6630, 7558, 11138, 12729, 14983, 15646, 16441, 14717, 11801, 8884, 6497, 5569];
+  const MONTH_TOTAL = MONTH_SHAPE.reduce((a, b) => a + b, 0);
+  const MONTHS = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+  // Consumo mensile del condominio letto dal grafico "Consumo storico" della bolletta Duferco (giu 2025 - mag 2026), in ordine gen-dic
+  const MONTHS_FULL = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+  const BILL_CONS = [39682, 31157, 28393, 17451, 19685, 29418, 30774, 25671, 19642, 16026, 28746, 34294];
+  const BILL_CONS_F1 = [12320, 10553, 9374, 5670, 6504, 11097, 12164, 8353, 7396, 5197, 8566, 10489];
+  const BILL_TOTAL = BILL_CONS.reduce((a, b) => a + b, 0);
+  const CO2_KG_PER_KWH = 0.26;
+
+  const GROUPS = [
+    { title: 'Impianto', fields: [
+      { key: 'kwp', label: 'Potenza impianto', unit: 'kWp', min: 10, max: 200, step: 0.5, slider: true, derived: s => fmtInt(s.kwp * 1000 / 460) + ' moduli da 460 W' },
+      { key: 'costo', label: 'Costo chiavi in mano', unit: '€', min: 20000, max: 250000, step: 500, slider: true, derived: s => fmtEur(s.costo / s.kwp) + '/kWp', hint: 'IVA esclusa. Preventivo SIPRO FTV-2600473a dell\'11/09/2026: 86.880 €.' },
+      { key: 'extra', label: 'Costi esclusi dal preventivo', unit: '€', min: 0, max: 30000, step: 100, hint: 'Stima: 500 € per meter e connext (lettura consumi) + circa 1.500 € per la verifica statica della copertura richiesta da SIPRO. Eventuali ottimizzatori e chiavetta 4G (300 €) in più. IVA esclusa.', warn: true },
+      { key: 'iva', label: 'IVA', unit: '%', min: 0, max: 22, step: 1, hint: 'Per i condomini è il 10%.' },
+      { key: 'resa', label: 'Producibilità', unit: 'kWh/kWp', min: 900, max: 1400, step: 5, slider: true, hint: 'Quanti kWh produce ogni kWp in un anno. 1.188 è il dato del tetto calcolato da IE nel 2025; il preventivo SIPRO non lo indica, va richiesto.', warn: true },
+      { key: 'degrado', label: 'Calo di resa annuo', unit: '%', min: 0, max: 1.5, step: 0.05 },
+      { key: 'om', label: 'Manutenzione e assicurazione', unit: '€/anno', min: 0, max: 5000, step: 50, hint: 'Stima. Il preventivo SIPRO non include un contratto di manutenzione: da richiedere.', warn: true },
+      { key: 'orizzonte', label: 'Anni considerati', unit: 'anni', min: 10, max: 30, step: 1 }
+    ]},
+    { title: 'Bollette del condominio', fields: [
+      { key: 'consumo', label: 'Consumo annuo', unit: 'kWh', min: 10000, max: 800000, step: 1000, hint: 'Bolletta maggio 2026: 320.939 kWh.' },
+      { key: 'spesa', label: 'Spesa annua', unit: '€', min: 5000, max: 300000, step: 500, hint: 'IVA esclusa. Bolletta maggio 2026: 94.430 €.' },
+      { key: 'fissa', label: 'di cui quote fisse', unit: '€', min: 0, max: 50000, step: 100, derived: s => 'energia ' + fmtDec(prezzoEvitabile(s), 3) + ' €/kWh', hint: 'Quota fissa e quota potenza: si pagano comunque, il fotovoltaico non le tocca.' },
+      { key: 'rincaro', label: 'Rincaro energia annuo', unit: '%', min: 0, max: 6, step: 0.5, slider: true },
+      { key: 'autoconsumo', label: 'Energia consumata sul posto', unit: '%', min: 30, max: 100, step: 1, slider: true, hint: 'Quota della produzione usata sul posto nel momento in cui viene prodotta. Calcolata incrociando, mese per mese, i consumi per fascia F1/F2/F3 della bolletta con le ore di sole: 92% tenendo conto di giornate serene e nuvolose; tenuto il 90% per prudenza. Il dato esatto si ottiene dai consumi orari dell\'area clienti Duferco.' }
+    ]},
+    { title: 'Energia in eccesso e AUC', fields: [
+      { key: 'condivisa', label: 'Eccesso assorbito dai condomini', unit: '%', min: 0, max: 100, step: 5, slider: true, hint: 'Parte dell\'eccesso che gli appartamenti consumano nella stessa ora: è l\'energia "condivisa" premiata dal GSE. L\'eccesso nasce soprattutto il sabato e la domenica, quando le parti comuni consumano meno e le famiglie sono a casa: per questo è quasi tutto assorbito. Tenuto il 90% per prudenza (ferie, ponti).' },
+      { key: 'premio', label: 'Tariffa premio GSE', unit: '€/kWh', min: 0, max: 0.15, step: 0.005, hint: 'Per 20 anni. In Lombardia fino a 0,13 €/kWh per impianti sotto i 200 kW.' },
+      { key: 'restituzione', label: 'Restituzione ARERA', unit: '€/kWh', min: 0, max: 0.02, step: 0.001 },
+      { key: 'vendita', label: 'Vendita eccesso in rete', unit: '€/kWh', min: 0, max: 0.2, step: 0.005, hint: 'Ritiro dedicato: si applica a tutto l\'eccesso, condiviso o no.' }
+    ]},
+    { title: 'Detrazione fiscale', fields: [
+      { key: 'detrazione', label: 'Detrazione', unit: '%', min: 0, max: 50, step: 1, slider: true, hint: 'In 10 rate annuali. 50% per chi ha lì l\'abitazione principale, 36% per gli altri: il 36% è l\'ipotesi prudente.' }
+    ]},
+    { title: 'Pagamento', fields: [
+      { key: 'pagamento', type: 'seg', label: 'Come paga il condominio', options: [['finanziamento', 'Finanziamento'], ['cassa', 'Tutto in cassa']] },
+      { key: 'acconto', label: 'Acconto in cassa', unit: '%', min: 0, max: 100, step: 5, slider: true, showIf: s => s.pagamento === 'finanziamento', derived: s => fmtEur(investimentoTotale(s) * s.acconto / 100) + ' subito', hint: 'Parte pagata subito dalla cassa condominiale. Il resto lo copre la banca.' },
+      { key: 'tipoTasso', type: 'seg', label: 'Tipo di tasso', options: [['fisso', 'Fisso 5,90%'], ['variabile', 'Variabile 5,04%']], showIf: s => s.pagamento === 'finanziamento', onSet: s => { s.tasso = BANCA[s.tipoTasso]; } },
+      { key: 'tasso', label: 'Tasso annuo (TAN)', unit: '%', min: 0, max: 12, step: 0.05, showIf: s => s.pagamento === 'finanziamento', hint: 'Dalla simulazione della banca del 18/12/2025: fisso 5,90% (TAEG 6,40%), variabile 5,04% (TAEG 5,47%).' },
+      { key: 'durata', label: 'Durata', unit: 'mesi', min: 12, max: 180, step: 12, showIf: s => s.pagamento === 'finanziamento', hint: 'La banca aveva simulato 61 mesi, di cui 1 di preammortamento.' },
+      { key: 'istruttoria', label: 'Spese di istruttoria', unit: '€', min: 0, max: 5000, step: 50, showIf: s => s.pagamento === 'finanziamento', hint: 'Come nella simulazione: in più imposta sostitutiva 0,25% e 2,75 € di incasso su ogni rata.' }
+    ]},
+    { title: 'Condominio', fields: [
+      { key: 'unita', label: 'Famiglie (unità abitative)', unit: 'n.', min: 2, max: 300, step: 1, hint: '52 abitazioni, box esclusi. Serve per la media per famiglia.' }
+    ]}
+  ];
+
+  /* ---------------- State ---------------- */
+  const STORE = 'magolfa32-piano-v5';
+  let state = loadState();
+
+  function loadState() {
+    let s = Object.assign({}, DEFAULTS);
+    try {
+      const h = location.hash.match(/^#s=(.+)$/);
+      if (h) return Object.assign(s, JSON.parse(decodeURIComponent(h[1])));
+    } catch (e) {}
+    try {
+      const raw = localStorage.getItem(STORE);
+      if (raw) Object.assign(s, JSON.parse(raw));
+    } catch (e) {}
+    return s;
+  }
+  function saveState() {
+    try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {}
+    try {
+      const diff = {};
+      Object.keys(DEFAULTS).forEach(k => { if (state[k] !== DEFAULTS[k]) diff[k] = state[k]; });
+      const h = Object.keys(diff).length ? '#s=' + encodeURIComponent(JSON.stringify(diff)) : '';
+      history.replaceState(null, '', location.pathname + location.search + h);
+    } catch (e) {}
+  }
+
+  /* ---------------- Formatting ---------------- */
+  const nfInt = new Intl.NumberFormat('it-IT', { maximumFractionDigits: 0 });
+  function fmtInt(n) { return nfInt.format(Math.round(n)); }
+  function fmtEur(n) { return nfInt.format(Math.round(n)) + ' €'; }
+  function fmtDec(n, d) { return new Intl.NumberFormat('it-IT', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n); }
+  function fmtPct(n, d) { return fmtDec(n, d == null ? 1 : d) + '%'; }
+  function fmtYears(y) {
+    if (y == null) return 'oltre l\'orizzonte';
+    const anni = Math.floor(y), mesi = Math.round((y - anni) * 12);
+    if (mesi === 12) return (anni + 1) + ' anni';
+    if (anni === 0) return mesi + ' mesi';
+    return anni + (anni === 1 ? ' anno' : ' anni') + (mesi ? ' e ' + mesi + (mesi === 1 ? ' mese' : ' mesi') : '');
+  }
+
+  /* ---------------- Model ---------------- */
+  function prezzoEvitabile(s) { return Math.max(0, (s.spesa - s.fissa) / s.consumo); }
+  function investimentoTotale(s) { return (s.costo + s.extra) * (1 + s.iva / 100); }
+
+  function rataMensile(P, tassoAnnuo, mesi) {
+    if (P <= 0 || mesi <= 0) return 0;
+    const r = tassoAnnuo / 100 / 12;
+    if (r === 0) return P / mesi;
+    return P * r / (1 - Math.pow(1 + r, -mesi));
+  }
+
+  function irr(cf) {
+    const npv = r => cf.reduce((a, c, t) => a + c / Math.pow(1 + r, t), 0);
+    let lo = -0.9, hi = 5;
+    if (npv(lo) < 0 || npv(hi) > 0) return null;
+    for (let i = 0; i < 80; i++) { const mid = (lo + hi) / 2; if (npv(mid) > 0) lo = mid; else hi = mid; }
+    return (lo + hi) / 2;
+  }
+
+  function compute(s) {
+    const H = Math.round(s.orizzonte);
+    const ivaF = 1 + s.iva / 100;
+    const investNetto = s.costo + s.extra;
+    const invest = investNetto * ivaF;
+    const pEvit = prezzoEvitabile(s);
+    // Lo scenario con finanziamento viene calcolato sempre, così il confronto nel grafico ha senso anche in modalità "tutto in cassa"
+    const acconto = invest * s.acconto / 100;
+    const finanziato = invest - acconto;
+    const speseBanca = finanziato > 0 ? s.istruttoria + finanziato * BANCA.impostaSostitutiva : 0;
+    const rataBase = rataMensile(finanziato, s.tasso, s.durata);
+    const rata = rataBase > 0 ? rataBase + BANCA.incassoRata : 0;
+    const anniFin = s.durata / 12;
+    const esborsoFin = acconto + speseBanca;
+
+    const rows = [];
+    let cumCassa = -invest, cumFin = -esborsoFin;
+    const cfCassa = [-invest], cfFin = [-esborsoFin];
+    for (let t = 1; t <= H; t++) {
+      const prod = s.kwp * s.resa * Math.pow(1 - s.degrado / 100, t - 1);
+      const auto = Math.min(prod * s.autoconsumo / 100, s.consumo);
+      const surplus = prod - auto;
+      const prezzo = pEvit * Math.pow(1 + s.rincaro / 100, t - 1) * ivaF;
+      const risparmio = auto * prezzo;
+      const vendita = surplus * s.vendita;
+      const auc = t <= 20 ? surplus * s.condivisa / 100 * (s.premio + s.restituzione) : 0;
+      const detr = t <= 10 ? invest * s.detrazione / 100 / 10 : 0;
+      const om = s.om * Math.pow(1.02, t - 1);
+      const mesiRata = Math.max(0, Math.min(12, s.durata - (t - 1) * 12));
+      const rataAnno = rata * mesiRata;
+      const flussoCassa = risparmio + vendita + auc + detr - om;
+      const flussoFin = flussoCassa - rataAnno;
+      cumCassa += flussoCassa; cumFin += flussoFin;
+      cfCassa.push(flussoCassa); cfFin.push(flussoFin);
+      rows.push({ t, prod, auto, surplus, risparmio, vendita, auc, detr, om, rataAnno, flussoCassa, flussoFin, cumCassa, cumFin });
+    }
+    const payback = cum => {
+      let prev = cum[0];
+      if (prev >= 0) return 0;
+      for (let i = 1; i < cum.length; i++) { if (cum[i] >= 0) return (i - 1) + (-prev) / (cum[i] - prev); prev = cum[i]; }
+      return null;
+    };
+    const cumC = [-invest].concat(rows.map(r => r.cumCassa));
+    const cumF = [-esborsoFin].concat(rows.map(r => r.cumFin));
+    const fin = s.pagamento === 'finanziamento';
+    const y1 = rows[0];
+    const prodTot = rows.reduce((a, r) => a + r.prod, 0);
+    return {
+      H, invest, investNetto, acconto, finanziato, speseBanca, esborsoFin, rata, anniFin, fin, rows, pEvit,
+      nettoY1Fin: y1.flussoFin,
+      interessi: rata * s.durata - finanziato,
+      paybackCassa: payback(cumC), paybackFin: payback(cumF), cumC, cumF,
+      guadagno: fin ? cumF[cumF.length - 1] : cumC[cumC.length - 1],
+      irr: irr(cfCassa),
+      bollettaOggi: s.spesa * ivaF,
+      bollettaDopo: s.spesa * ivaF - y1.risparmio,
+      beneficioY1: y1.risparmio + y1.vendita + y1.auc,
+      flussoY1: fin ? y1.flussoFin : y1.flussoCassa,
+      costoKwhProdotto: invest / prodTot,
+      co2: y1.prod * CO2_KG_PER_KWH / 1000
+    };
+  }
+
+  /* ---------------- Sidebar ---------------- */
+  const groupsEl = document.getElementById('groups');
+  function buildSidebar() {
+    groupsEl.innerHTML = '';
+    GROUPS.forEach(g => {
+      const d = document.createElement('details'); d.className = 'group'; d.open = true;
+      const sm = document.createElement('summary'); sm.textContent = g.title; d.appendChild(sm);
+      const wrap = document.createElement('div'); wrap.className = 'fields';
+      g.fields.forEach(f => wrap.appendChild(buildField(f)));
+      d.appendChild(wrap); groupsEl.appendChild(d);
+    });
+  }
+  function buildField(f) {
+    const el = document.createElement('div'); el.className = 'field'; el.dataset.key = f.key;
+    if (f.type === 'seg') {
+      el.innerHTML = '<label>' + f.label + '</label>';
+      const seg = document.createElement('div'); seg.className = 'seg';
+      f.options.forEach(([v, lab]) => {
+        const b = document.createElement('button'); b.type = 'button'; b.textContent = lab; b.dataset.val = v;
+        b.setAttribute('aria-pressed', String(state[f.key] === v));
+        b.addEventListener('click', () => { state[f.key] = v; if (f.onSet) f.onSet(state); onChange(); });
+        seg.appendChild(b);
+      });
+      el.appendChild(seg);
+      return el;
+    }
+    const id = 'f_' + f.key;
+    el.innerHTML =
+      '<label for="' + id + '"><span>' + f.label + '</span><span class="derived" data-derived></span></label>' +
+      '<div class="row"><input type="number" id="' + id + '" min="' + f.min + '" max="' + f.max + '" step="' + f.step + '" inputmode="decimal"><span class="unit">' + f.unit + '</span></div>' +
+      (f.slider ? '<input type="range" aria-label="' + f.label + ' (cursore)" min="' + f.min + '" max="' + f.max + '" step="' + f.step + '">' : '') +
+      (f.hint ? '<div class="hint' + (f.warn ? ' warn' : '') + '">' + f.hint + '</div>' : '');
+    const num = el.querySelector('input[type="number"]');
+    const rng = el.querySelector('input[type="range"]');
+    num.addEventListener('input', () => { const v = parseFloat(num.value); if (!isNaN(v)) { state[f.key] = v; if (rng) rng.value = v; onChange(true); } });
+    num.addEventListener('change', () => { let v = parseFloat(num.value); if (isNaN(v)) v = DEFAULTS[f.key]; v = Math.min(f.max, Math.max(f.min, v)); state[f.key] = v; onChange(); });
+    if (rng) rng.addEventListener('input', () => { state[f.key] = parseFloat(rng.value); num.value = rng.value; onChange(true); });
+    return el;
+  }
+  function syncSidebar(skipInputs) {
+    GROUPS.forEach(g => g.fields.forEach(f => {
+      const el = groupsEl.querySelector('.field[data-key="' + f.key + '"]');
+      if (!el) return;
+      if (f.showIf) el.style.display = f.showIf(state) ? '' : 'none';
+      if (f.type === 'seg') { el.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.val === state[f.key]))); return; }
+      if (!skipInputs) {
+        const num = el.querySelector('input[type="number"]'); num.value = state[f.key];
+        const rng = el.querySelector('input[type="range"]'); if (rng) rng.value = state[f.key];
+      }
+      const dv = el.querySelector('[data-derived]'); if (dv && f.derived) dv.textContent = f.derived(state);
+    }));
+  }
+
+  /* ---------------- Rendering ---------------- */
+  function onChange(fromTyping) { saveState(); syncSidebar(fromTyping); render(); }
+
+  function render() {
+    const m = compute(state);
+    renderFacts(m); renderKpis(m); renderStory(m); renderFamily(m); renderBill(m); renderMonth(m); renderCum(m); renderFin(m); renderTable(m); renderFaq(m); renderAssump(m);
+  }
+
+  function renderFacts(m) {
+    const s = state, moduli = Math.round(s.kwp * 1000 / 460);
+    document.getElementById('facts').innerHTML = [
+      [fmtInt(s.unita), 'famiglie'],
+      [fmtInt(s.consumo) + ' kWh', 'consumati ogni anno'],
+      [fmtEur(m.bollettaOggi), 'di corrente all\'anno, oggi'],
+      [fmtDec(s.kwp, 1) + ' kWp', 'di impianto proposto'],
+      [fmtInt(moduli), 'pannelli sul tetto']
+    ].map(f => '<div class="fact"><b>' + f[0] + '</b><span>' + f[1] + '</span></div>').join('');
+    // Un quadratino per pannello. Con la proposta da 63 kWp i gruppi sono quelli veri del layout SIPRO.
+    const groups = Math.abs(s.kwp - DEFAULTS.kwp) < 0.01 ? SIPRO_GROUPS : [moduli];
+    let html = '';
+    groups.forEach((n, gi) => { for (let i = 0; i < n; i++) html += '<i' + (gi > 0 && i === 0 ? ' class="g"' : '') + '></i>'; });
+    document.getElementById('mosaic').innerHTML = html;
+  }
+
+  function renderFamily(m) {
+    const s = state, y1 = m.rows[0], n = Math.max(1, s.unita);
+    // Spesa netta di corrente condominiale: bolletta meno tutti i benefici, più manutenzione e rata
+    const oggi = m.bollettaOggi / n;
+    const durante = (m.bollettaDopo - y1.auc - y1.vendita - y1.detr + y1.om + (m.fin ? m.rata * 12 : 0)) / n;
+    const idxDopo = Math.min(m.rows.length - 1, Math.ceil(s.durata / 12));
+    const rDopo = m.rows[idxDopo];
+    const bollettaDopoRata = s.spesa * (1 + s.iva / 100) * Math.pow(1 + s.rincaro / 100, rDopo.t - 1);
+    const dopo = (bollettaDopoRata - rDopo.risparmio - rDopo.auc - rDopo.vendita - rDopo.detr + rDopo.om) / n;
+    const senzaImpiantoDopo = bollettaDopoRata / n;
+    const tiles = m.fin ? [
+      { label: 'Oggi', value: fmtEur(oggi), sub: 'all\'anno per famiglia, in media, con la bolletta attuale' },
+      { label: 'Durante il finanziamento (' + fmtInt(s.durata / 12) + ' anni)', value: fmtEur(durante), sub: (durante <= oggi ? 'già ' + fmtEur(oggi - durante) + ' in meno all\'anno, rata compresa' : fmtEur(durante - oggi) + ' in più all\'anno finché c\'è la rata') + (m.acconto > 0 ? ', più ' + fmtEur(m.acconto / n) + ' di acconto una tantum' : ', senza anticipare nulla'), best: durante <= oggi },
+      { label: 'Finita la rata (dall\'anno ' + (rDopo.t) + ')', value: fmtEur(dopo), sub: fmtEur(senzaImpiantoDopo - dopo) + ' in meno all\'anno rispetto a non fare nulla (bolletta a ' + fmtEur(senzaImpiantoDopo) + ' col rincaro)', best: true }
+    ] : [
+      { label: 'Oggi', value: fmtEur(oggi), sub: 'all\'anno per famiglia, in media, con la bolletta attuale' },
+      { label: 'Quota dell\'investimento', value: fmtEur(m.invest / n), sub: 'una tantum, in media per famiglia, pagando tutto in cassa' },
+      { label: 'Dal primo anno', value: fmtEur((m.bollettaDopo - y1.auc - y1.vendita - y1.detr + y1.om) / n), sub: fmtEur(oggi - (m.bollettaDopo - y1.auc - y1.vendita - y1.detr + y1.om) / n) + ' in meno all\'anno per famiglia', best: true }
+    ];
+    document.getElementById('family').innerHTML = tiles.map(t => '<div class="card fam' + (t.best ? ' best' : '') + '"><div class="f-label">' + t.label + '</div><div class="f-value">' + t.value + '</div><div class="f-sub">' + t.sub + '</div></div>').join('');
+  }
+
+  function renderFaq(m) {
+    const s = state, y1 = m.rows[0];
+    const ie = PRESETS.ie111, ieInvest = (ie.costo + ie.extra) * (1 + ie.iva / 100);
+    const items = [
+      ['Quanto ci mette a ripagarsi?', m.fin
+        ? 'Con il finanziamento non c\'è niente da "ripagare" in senso stretto: la rata (' + fmtEur(m.rata) + ' al mese) è ' + (m.nettoY1Fin >= 0 ? 'più bassa' : 'più alta') + ' dei benefici che l\'impianto produce ogni mese. ' + (m.nettoY1Fin >= 0 ? 'Il condominio è in attivo fin dal primo anno' : 'La differenza è di ' + fmtEur(-m.nettoY1Fin) + ' l\'anno nei primi ' + fmtInt(s.durata / 12) + ' anni') + '. Pagando invece tutto in cassa, i ' + fmtEur(m.invest) + ' rientrano in <b>' + fmtYears(m.paybackCassa) + '</b>.'
+        : 'Pagando in cassa, i ' + fmtEur(m.invest) + ' rientrano in <b>' + fmtYears(m.paybackCassa) + '</b> grazie ai risparmi. Dopo, per tutta la vita dell\'impianto (25–30 anni), è guadagno netto.'],
+      ['La detrazione fiscale arriva al condominio?', 'No, e questo va capito bene. La detrazione del ' + fmtInt(s.detrazione) + '% (' + fmtEur(y1.detr) + ' l\'anno per 10 anni, in totale ' + fmtEur(y1.detr * 10) + ') non entra nella cassa condominiale: l\'amministratore comunica a ogni famiglia la sua quota di spesa e ciascuno la scarica dalle proprie tasse, in dieci anni. Chi ha lì l\'abitazione principale scarica il 50%, gli altri il 36%; chi paga poche tasse (pensioni basse, redditi minimi) può non riuscire a usarla tutta. Per questo la pagina mostra sempre due numeri: quanto rende l\'impianto <b>in totale</b> e quanto entra <b>solo in cassa condominiale</b> (vedi la scheda "Con il finanziamento").'],
+      ['E se un condomino non paga la sua quota?', 'Il finanziamento è intestato al condominio e la rata entra nelle spese ordinarie, ripartite per millesimi esattamente come la bolletta di oggi. Chi non paga viene gestito con gli strumenti soliti dell\'amministratore, come per qualunque altra spesa comune. In più, il risparmio in bolletta abbassa le spese di tutti: la rata è coperta dal risparmio stesso.'],
+      ['E se vendo casa?', 'L\'impianto è un bene comune, come l\'ascensore o la facciata rifatta. Chi compra subentra nei benefici e nella quota, e un palazzo con spese energetiche più basse si vende meglio. Non ci sono contratti personali da trasferire.'],
+      ['Chi fa la manutenzione? E le garanzie?', 'Un impianto fotovoltaico non ha parti in movimento: la manutenzione è un controllo periodico delle connessioni e la pulizia dei pannelli. Nel piano è già conteggiata una voce di <b>' + fmtEur(s.om) + ' l\'anno</b> per manutenzione e assicurazione. Le garanzie del preventivo SIPRO: <b>30 anni sui pannelli</b> (monocristallini bifacciali, resistenti alla grandine), <b>10 anni sui 6 inverter</b>, 2 anni sul resto del materiale. SIPRO segue progetto, pratiche GSE, installazione e collaudo con certificazione; la produzione si controlla da un\'app in tempo reale.'],
+      ['Si vede dalla strada? Rovina l\'estetica?', 'Le falde sono quasi piane (10°) e i pannelli sono appoggiati paralleli al tetto, senza strutture rialzate e senza batterie. Dalla strada non si vedono. Il layout evita comignoli, lucernari e antenne.'],
+      ['Perché non l\'impianto grande dell\'anno scorso?', 'L\'anno scorso la proposta era da 111,6 kWp per circa ' + fmtEur(ieInvest) + ' IVA inclusa (quasi 150.000 € con le batterie): troppo. Questa proposta è tagliata su misura: <b>' + fmtDec(s.kwp, 1) + ' kWp</b>, niente batterie, investimento di <b>' + fmtEur(m.invest) + '</b>. Produce meno, ma quasi tutto quello che produce viene consumato subito dal palazzo, che è la cosa che rende di più.'],
+      ['Come funziona il gruppo di autoconsumo collettivo (AUC)?', 'Il condominio è il referente verso il GSE; ogni famiglia aderisce con una firma, senza lavori in casa e senza cambiare fornitore. Quando il tetto produce più di quanto le parti comuni consumano, l\'energia in eccesso va in rete e, se nello stesso momento gli appartamenti la stanno consumando, il GSE riconosce un premio per 20 anni (nel piano: ' + fmtDec(s.premio, 3) + ' €/kWh più ' + fmtDec(s.restituzione, 3) + ' €/kWh di restituzione ARERA). Come dividere il premio tra cassa comune e singole famiglie si decide in assemblea.'],
+      ['E se in futuro il palazzo consumasse meno?', 'La pompa di calore, gli ascensori e le autoclavi ci saranno anche tra dieci anni, e l\'impianto copre solo il ' + fmtDec(y1.prod / s.consumo * 100, 0) + '% del consumo attuale: c\'è molto margine. E l\'energia eventualmente in eccesso non va persa: viene condivisa con le famiglie tramite l\'AUC o venduta in rete.'],
+      ['Cosa succede se il prezzo dell\'energia scende?', 'Il piano usa ' + fmtDec(m.pEvit * (1 + s.iva / 100), 3) + ' €/kWh IVA inclusa, cioè quanto il condominio paga davvero oggi, con un rincaro del ' + fmtDec(s.rincaro, 1) + '% l\'anno. Puoi provare tu stesso cosa succede con prezzi più bassi: metti il rincaro a zero nelle variabili e guarda come cambiano i numeri. Il tetto produce comunque energia che non si compra.']
+    ];
+    document.getElementById('faq').innerHTML = items.map((it, i) => '<details' + (i === 0 ? ' open' : '') + '><summary>' + it[0] + '</summary><div class="a">' + it[1] + '</div></details>').join('');
+  }
+
+  function renderKpis(m) {
+    const s = state;
+    let tiles;
+    if (m.fin) {
+      const netto = m.nettoY1Fin;
+      const benMese = (m.beneficioY1 + m.rows[0].detr - m.rows[0].om) / 12;
+      tiles = [
+        { hero: true, label: netto >= 0 ? 'Il primo anno, pagata la rata, condominio e famiglie sono in attivo di' : 'Il primo anno, pagata la rata, condominio e famiglie integrano', value: fmtEur(Math.abs(netto)), sub: 'rata ' + fmtEur(m.rata) + ' al mese contro ' + fmtEur(benMese) + ' al mese di benefici, di cui ' + fmtEur(m.rows[0].detr / 12) + ' di detrazione fiscale che torna alle famiglie' + (m.acconto > 0 ? ' · acconto ' + fmtEur(m.acconto) : ' · senza anticipare nulla') },
+        { label: 'Investimento totale', value: fmtEur(m.invest), sub: 'IVA ' + s.iva + '% inclusa · finanziati ' + fmtEur(m.finanziato) + (m.acconto > 0 ? ' · acconto ' + fmtEur(m.acconto) : '') },
+        { label: 'Rata mensile', value: fmtEur(m.rata), sub: fmtInt(s.durata) + ' mesi al ' + fmtDec(s.tasso, 2) + '% · interessi totali ' + fmtEur(m.interessi) },
+        { label: 'Guadagno netto in ' + m.H + ' anni', value: fmtEur(m.guadagno), sub: 'dopo aver pagato acconto, rate, spese bancarie e manutenzione' },
+        { label: 'Rendimento annuo', value: m.irr == null ? '—' : fmtPct(m.irr * 100, 1), sub: 'tasso interno di rendimento dell\'impianto, contro il ' + fmtDec(s.tasso, 2) + '% chiesto dalla banca' }
+      ];
+    } else {
+      tiles = [
+        { hero: true, label: 'L\'investimento rientra in', value: fmtYears(m.paybackCassa), sub: 'pagando tutto in cassa, con i risparmi generati dall\'impianto' },
+        { label: 'Investimento totale', value: fmtEur(m.invest), sub: 'IVA ' + s.iva + '% inclusa · ' + fmtEur(m.invest / Math.max(1, s.unita)) + ' in media per unità' },
+        { label: 'Beneficio primo anno', value: fmtEur(m.beneficioY1), sub: 'bolletta più leggera + energia condivisa e venduta' },
+        { label: 'Guadagno netto in ' + m.H + ' anni', value: fmtEur(m.guadagno), sub: 'dopo aver ripagato impianto e manutenzione' },
+        { label: 'Rendimento annuo', value: m.irr == null ? '—' : fmtPct(m.irr * 100, 1), sub: 'tasso interno di rendimento dell\'investimento' }
+      ];
+    }
+    document.getElementById('kpis').innerHTML = tiles.map(t =>
+      '<div class="kpi' + (t.hero ? ' hero' : '') + '"><div class="k-label">' + t.label + '</div><div class="k-value">' + t.value + '</div><div class="k-sub">' + t.sub + '</div></div>'
+    ).join('');
+  }
+
+  function renderStory(m) {
+    const s = state, y1 = m.rows[0];
+    const copertura = y1.prod / s.consumo * 100;
+    const p1 = 'Oggi il palazzo compra dalla rete <b>' + fmtInt(s.consumo) + ' kWh l\'anno</b>, soprattutto per la pompa di calore centralizzata, gli ascensori e le autoclavi, e li paga <b>' + fmtEur(m.bollettaOggi) + '</b>. Con un impianto da <b>' + fmtDec(s.kwp, 1) + ' kWp</b> sul tetto, il condominio se ne produce da solo circa <b>' + fmtInt(y1.prod) + ' kWh</b>, il <b>' + fmtDec(copertura, 0) + '%</b>. Il <b>' + fmtInt(s.autoconsumo) + '%</b> di questa energia viene usata sul posto nel momento in cui viene prodotta, e ogni kWh non comprato vale <b>' + fmtDec(m.pEvit * (1 + s.iva / 100), 3) + ' €</b>: la bolletta scende a <b>' + fmtEur(m.bollettaDopo) + '</b> già dal primo anno.';
+    const p2 = 'L\'energia in eccesso non va sprecata. Nasce soprattutto il sabato e la domenica, quando la pompa di calore lavora meno e le famiglie sono a casa: gli appartamenti la consumano nella stessa ora e il GSE la premia per 20 anni come energia condivisa (<b>' + fmtEur(y1.auc) + '</b> il primo anno). Tutto l\'eccesso viene comunque venduto in rete (<b>' + fmtEur(y1.vendita) + '</b>). Con la detrazione fiscale del <b>' + fmtInt(s.detrazione) + '%</b> tornano indietro altri <b>' + fmtEur(y1.detr) + '</b> l\'anno per 10 anni.';
+    let p3;
+    if (m.fin) {
+      const rataAnno = m.rata * 12;
+      const netto = m.nettoY1Fin;
+      const cassaAnno = m.beneficioY1 - y1.om - rataAnno;
+      const dopoRata = m.rows[Math.min(m.rows.length - 1, Math.ceil(s.durata / 12))];
+      p3 = (m.acconto > 0 ? 'Con un acconto di <b>' + fmtEur(m.acconto) + '</b> (' + fmtInt(s.acconto) + '%) e finanziando i restanti <b>' + fmtEur(m.finanziato) + '</b>' : 'Finanziando l\'intero importo di <b>' + fmtEur(m.finanziato) + '</b>') + ' in <b>' + fmtInt(s.durata) + ' mesi</b> a tasso ' + s.tipoTasso + ' del ' + fmtDec(s.tasso, 2) + '%, la rata è di <b>' + fmtEur(m.rata) + ' al mese</b>, cioè ' + fmtEur(rataAnno) + ' l\'anno, contro ' + fmtEur(m.beneficioY1 + y1.detr) + ' di benefici. ' +
+        (netto >= 0 ? 'Condominio e famiglie insieme sono <b>in attivo di ' + fmtEur(netto) + ' fin dal primo anno</b>' + (m.acconto > 0 ? '.' : ', senza anticipare un euro.') : 'Nei primi anni condominio e famiglie insieme integrano <b>' + fmtEur(-netto) + ' l\'anno</b>.') +
+        ' Attenzione però: ' + fmtEur(y1.detr) + ' di questi sono la detrazione fiscale, che torna alle famiglie con le tasse e non in cassa condominiale; guardando la sola cassa del condominio, la differenza tra benefici e rate è di <b>' + (cassaAnno >= 0 ? '+' : '−') + fmtEur(Math.abs(cassaAnno)) + ' l\'anno</b>.' +
+        ' Finita la rata, il beneficio resta tutto al condominio: circa <b>' + fmtEur(dopoRata.flussoCassa) + ' l\'anno</b>. In ' + m.H + ' anni il guadagno netto è di <b>' + fmtEur(m.guadagno) + '</b>.';
+    } else {
+      p3 = 'Pagando in cassa <b>' + fmtEur(m.invest) + '</b>, l\'investimento rientra in <b>' + fmtYears(m.paybackCassa) + '</b> e in ' + m.H + ' anni lascia al condominio un guadagno netto di <b>' + fmtEur(m.guadagno) + '</b>. Detto in un altro modo: ogni kWh prodotto dal tetto costa <b>' + fmtDec(m.costoKwhProdotto, 3) + ' €</b> su ' + m.H + ' anni, contro i ' + fmtDec(m.pEvit * (1 + s.iva / 100), 3) + ' € pagati oggi alla rete.';
+    }
+    document.getElementById('story').innerHTML = '<h2>In parole semplici</h2><p>' + p1 + '</p><p>' + p2 + '</p><p>' + p3 + '</p><p style="color:var(--muted);font-size:13px">Ogni anno si evitano circa ' + fmtDec(m.co2, 1) + ' tonnellate di CO₂.</p>';
+  }
+
+  /* ---------------- Charts (SVG) ---------------- */
+  const tip = document.getElementById('tip');
+  function showTip(html, ev) { tip.innerHTML = html; tip.style.display = 'block'; moveTip(ev); }
+  function moveTip(ev) { const w = tip.offsetWidth, h = tip.offsetHeight; let x = ev.clientX + 14, y = ev.clientY + 14; if (x + w > innerWidth - 8) x = ev.clientX - w - 14; if (y + h > innerHeight - 8) y = ev.clientY - h - 14; tip.style.left = x + 'px'; tip.style.top = y + 'px'; }
+  function hideTip() { tip.style.display = 'none'; }
+  function bindTips(container) {
+    container.querySelectorAll('[data-tip]').forEach(el => {
+      el.addEventListener('mouseenter', ev => showTip(el.dataset.tip, ev));
+      el.addEventListener('mousemove', moveTip);
+      el.addEventListener('mouseleave', hideTip);
+    });
+  }
+  function topBar(x, y, w, h, r) {
+    if (h <= 0) return '';
+    r = Math.min(r, w / 2, h);
+    return 'M' + x + ',' + (y + h) + 'V' + (y + r) + 'a' + r + ',' + r + ' 0 0 1 ' + r + ',-' + r + 'h' + (w - 2 * r) + 'a' + r + ',' + r + ' 0 0 1 ' + r + ',' + r + 'V' + (y + h) + 'Z';
+  }
+  function niceStep(max, ticks) {
+    const raw = max / ticks, p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const f = raw / p; const n = f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10;
+    return n * p;
+  }
+
+  function renderBill(m) {
+    const W = 460, H = 250, padL = 16, padR = 16, padT = 30, padB = 34;
+    const vals = [{ lab: 'Oggi', v: m.bollettaOggi, c: 'var(--s-bill)' }, { lab: 'Con il fotovoltaico', v: m.bollettaDopo, c: 'var(--s-save)' }];
+    const max = Math.max(m.bollettaOggi, 1) * 1.08;
+    const innerH = H - padT - padB, base = H - padB;
+    const bw = 120, gap = 60, x0 = (W - (2 * bw + gap)) / 2;
+    let out = '';
+    vals.forEach((d, i) => {
+      const h = d.v / max * innerH, x = x0 + i * (bw + gap), y = base - h;
+      out += '<path d="' + topBar(x, y, bw, h, 4) + '" fill="' + d.c + '"></path>';
+      out += '<text x="' + (x + bw / 2) + '" y="' + (y - 8) + '" text-anchor="middle" class="val strong">' + fmtEur(d.v) + '</text>';
+      out += '<text x="' + (x + bw / 2) + '" y="' + (base + 20) + '" text-anchor="middle">' + d.lab + '</text>';
+      out += '<rect class="hit" x="' + (x - 10) + '" y="' + padT + '" width="' + (bw + 20) + '" height="' + (innerH + 10) + '" data-tip="<b>' + d.lab + '</b><br>' + fmtEur(d.v) + ' l\'anno, IVA inclusa"></rect>';
+    });
+    const delta = m.bollettaOggi - m.bollettaDopo;
+    const xa = x0 + bw + gap / 2;
+    out += '<line class="axis" x1="' + padL + '" x2="' + (W - padR) + '" y1="' + base + '" y2="' + base + '"></line>';
+    out += '<text x="' + xa + '" y="' + (base - innerH * (m.bollettaDopo / max) - innerH * ((m.bollettaOggi - m.bollettaDopo) / max) / 2 + 4) + '" text-anchor="middle" class="val" style="fill:var(--good-text)">−' + fmtEur(delta) + '</text>';
+    const el = document.getElementById('chartBill');
+    el.innerHTML = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Spesa annua oggi ' + fmtEur(m.bollettaOggi) + ', con il fotovoltaico ' + fmtEur(m.bollettaDopo) + '">' + out + '</svg>';
+    bindTips(el);
+  }
+
+  function renderMonth(m) {
+    const s = state, y1 = m.rows[0];
+    const W = 460, H = 250, padL = 44, padR = 12, padT = 18, padB = 30;
+    const prod = MONTH_SHAPE.map(v => v / MONTH_TOTAL * y1.prod);
+    const cons = BILL_CONS.map(v => v / BILL_TOTAL * s.consumo);
+    const consF1 = BILL_CONS_F1.map(v => v / BILL_TOTAL * s.consumo);
+    const max = Math.max(Math.max.apply(null, prod), Math.max.apply(null, cons)) * 1.12;
+    const innerW = W - padL - padR, innerH = H - padT - padB, base = H - padB;
+    const step = niceStep(max, 4);
+    let out = '';
+    for (let v = 0; v <= max; v += step) {
+      const y = base - v / max * innerH;
+      out += '<line class="grid" x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y + '" y2="' + y + '"></line>';
+      out += '<text x="' + (padL - 6) + '" y="' + (y + 4) + '" text-anchor="end">' + (v >= 1000 ? fmtInt(v / 1000) + 'k' : fmtInt(v)) + '</text>';
+    }
+    const slot = innerW / 12, bw = slot * 0.36, gap = slot * 0.06;
+    let minIdx = 0;
+    cons.forEach((c, i) => {
+      if (c < cons[minIdx]) minIdx = i;
+      const x0 = padL + i * slot + (slot - 2 * bw - gap) / 2;
+      const hc = c / max * innerH, hf = consF1[i] / max * innerH, hp = prod[i] / max * innerH;
+      out += '<path d="' + topBar(x0, base - hc, bw, hc, 3) + '" fill="var(--s-bill)" opacity="0.35"></path>';
+      out += '<rect x="' + x0 + '" y="' + (base - hf) + '" width="' + bw + '" height="' + hf + '" fill="var(--s-bill)" opacity="0.7"></rect>';
+      out += '<path d="' + topBar(x0 + bw + gap, base - hp, bw, hp, 3) + '" fill="var(--s-pv)"></path>';
+      out += '<text x="' + (padL + i * slot + slot / 2) + '" y="' + (base + 18) + '" text-anchor="middle">' + MONTHS[i] + '</text>';
+      out += '<rect class="hit" x="' + (padL + i * slot) + '" y="' + padT + '" width="' + slot + '" height="' + innerH + '" data-tip="<b>' + MONTHS[i] + '</b><br>Consumo ' + fmtInt(c) + ' kWh<br>di cui di giorno nei feriali (F1) ' + fmtInt(consF1[i]) + ' kWh<br>Produzione ' + fmtInt(prod[i]) + ' kWh"></rect>';
+    });
+    out += '<line class="axis" x1="' + padL + '" x2="' + (W - padR) + '" y1="' + base + '" y2="' + base + '"></line>';
+    const el = document.getElementById('chartMonth');
+    el.innerHTML = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Consumo mensile reale del condominio confrontato con la produzione mensile stimata del fotovoltaico">' + out + '</svg>';
+    bindTips(el);
+    const note = document.getElementById('monthNote');
+    if (note) note.innerHTML = 'Consumi mese per mese dalla bolletta Duferco (giugno 2025 – maggio 2026). In nessun mese il tetto produce più di quanto il palazzo consuma: anche a ' + MONTHS_FULL[minIdx] + ', il mese più leggero, la produzione (' + fmtInt(prod[minIdx]) + ' kWh) resta sotto il consumo (' + fmtInt(cons[minIdx]) + ' kWh). Per questo circa il ' + fmtInt(s.autoconsumo) + '% dell\'energia prodotta viene usata in casa.';
+  }
+
+  function renderCum(m) {
+    // Larghezza del disegno legata a quella del contenitore, così su telefono le scritte restano leggibili
+    const cw = document.getElementById('chartCum').clientWidth || 960;
+    const W = Math.max(420, Math.min(960, cw)), H = W < 640 ? 320 : 300, padL = 56, padR = 20, padT = 24, padB = 34;
+    const series = [{ data: m.cumC, c: 'var(--s-save)', dash: '', lab: 'Tutto in cassa', pay: m.paybackCassa, active: !m.fin }, { data: m.cumF, c: 'var(--s-pv)', dash: '6 5', lab: 'Con finanziamento', pay: m.paybackFin, active: m.fin }];
+    const all = m.cumC.concat(m.cumF);
+    let min = Math.min.apply(null, all), max = Math.max.apply(null, all);
+    if (max < 0) max = 0; if (min > 0) min = 0;
+    const range = max - min || 1; min -= range * 0.05; max += range * 0.08;
+    const innerW = W - padL - padR, innerH = H - padT - padB;
+    const X = t => padL + t / m.H * innerW, Y = v => padT + (max - v) / (max - min) * innerH;
+    const step = niceStep(max - min, 5);
+    let out = '';
+    for (let v = Math.ceil(min / step) * step; v <= max; v += step) {
+      out += '<line class="grid" x1="' + padL + '" x2="' + (W - padR) + '" y1="' + Y(v) + '" y2="' + Y(v) + '"></line>';
+      out += '<text x="' + (padL - 8) + '" y="' + (Y(v) + 4) + '" text-anchor="end">' + (Math.abs(v) >= 1000 ? fmtInt(v / 1000) + 'k' : fmtInt(v)) + '</text>';
+    }
+    out += '<line class="axis" x1="' + padL + '" x2="' + (W - padR) + '" y1="' + Y(0) + '" y2="' + Y(0) + '"></line>';
+    const tickStep = W < 640 ? 5 : (m.H > 20 ? 5 : 2);
+    for (let t = 0; t <= m.H; t += tickStep) out += '<text x="' + X(t) + '" y="' + (H - padB + 20) + '" text-anchor="middle">' + (t === 0 ? 'oggi' : 'anno ' + t) + '</text>';
+    // area for the active series
+    const act = series.find(sr => sr.active);
+    let area = 'M' + X(0) + ',' + Y(0);
+    act.data.forEach((v, t) => { area += 'L' + X(t) + ',' + Y(v); });
+    area += 'L' + X(m.H) + ',' + Y(0) + 'Z';
+    out += '<path d="' + area + '" fill="' + act.c + '" opacity="0.12"></path>';
+    series.forEach(sr => {
+      let d = '';
+      sr.data.forEach((v, t) => { d += (t ? 'L' : 'M') + X(t) + ',' + Y(v); });
+      out += '<path d="' + d + '" fill="none" stroke="' + sr.c + '" stroke-width="' + (sr.active ? 2.5 : 2) + '" stroke-dasharray="' + sr.dash + '" opacity="' + (sr.active ? 1 : 0.7) + '" stroke-linejoin="round"></path>';
+      if (sr.pay != null && sr.pay > 0 && sr.pay <= m.H) {
+        const px = X(sr.pay), py = Y(0);
+        out += '<circle cx="' + px + '" cy="' + py + '" r="6" fill="' + sr.c + '" stroke="var(--surface)" stroke-width="2"></circle>';
+        if (sr.active) out += '<text x="' + (px + 10) + '" y="' + (py - 10) + '" class="val strong">rientro: ' + fmtYears(sr.pay) + '</text>';
+      }
+    });
+    // Etichette finali: se le due linee finiscono vicine, una va sopra e una sotto
+    const endC = m.cumC[m.cumC.length - 1], endF = m.cumF[m.cumF.length - 1];
+    const close = Math.abs(Y(endC) - Y(endF)) < 16;
+    const yC = close ? Math.min(Y(endC), Y(endF)) - 8 : Y(endC) - 8;
+    const yF = close ? Math.max(Y(endC), Y(endF)) + 16 : Y(endF) - 8;
+    out += '<text x="' + (X(m.H) - 4) + '" y="' + yC + '" text-anchor="end" class="val" style="fill:var(--s-save)">Tutto in cassa ' + fmtEur(endC) + '</text>';
+    out += '<text x="' + (X(m.H) - 4) + '" y="' + yF + '" text-anchor="end" class="val" style="fill:var(--s-pv)">Con finanziamento ' + fmtEur(endF) + '</text>';
+    for (let t = 0; t <= m.H; t++) {
+      const x0 = t === 0 ? padL : X(t - 0.5), x1 = t === m.H ? X(m.H) : X(t + 0.5);
+      out += '<rect class="hit" x="' + x0 + '" y="' + padT + '" width="' + (x1 - x0) + '" height="' + innerH + '" data-tip="<b>' + (t === 0 ? 'Oggi' : 'Fine anno ' + t) + '</b><br>In cassa: ' + fmtEur(m.cumC[t]) + '<br>Con finanziamento: ' + fmtEur(m.cumF[t]) + '"></rect>';
+    }
+    const el = document.getElementById('chartCum');
+    el.innerHTML = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Flusso di cassa cumulato in ' + m.H + ' anni">' + out + '</svg>';
+    bindTips(el);
+  }
+
+  function renderFin(m) {
+    const s = state, y1 = m.rows[0];
+    const el = document.getElementById('finCard');
+    const benMese = (m.beneficioY1 + y1.detr - y1.om) / 12;
+    const rataInfo = m.rata;
+    const netto = benMese - rataInfo;
+    const cassaNetta = (m.beneficioY1 - y1.om) / 12 - rataInfo;
+    const maxBar = Math.max(benMese, rataInfo, 1);
+    const cond = 'tasso ' + s.tipoTasso + ' ' + fmtDec(s.tasso, 2) + '% per ' + fmtInt(s.durata) + ' mesi, come nella simulazione della banca del 18/12/2025 ridotta al nuovo importo';
+    const intro = m.fin
+      ? 'Finanziamento di ' + fmtEur(m.finanziato) + (m.acconto > 0 ? ' dopo un acconto di ' + fmtEur(m.acconto) : ', senza acconto') + ': ' + cond + '.'
+      : 'Stai guardando lo scenario "tutto in cassa". Per confronto, qui sotto cosa succederebbe finanziando ' + fmtEur(m.finanziato) + (m.acconto > 0 ? ' con un acconto di ' + fmtEur(m.acconto) : ' senza acconto') + ': ' + cond + '.';
+    el.innerHTML =
+      '<p style="color:var(--ink-2);font-size:13.5px">' + intro + '</p>' +
+      '<div class="fin">' +
+        '<div class="box"><div class="lab">Acconto in cassa</div><div class="num">' + fmtEur(m.acconto) + '</div></div>' +
+        '<div class="box"><div class="lab">Importo finanziato</div><div class="num">' + fmtEur(m.finanziato) + '</div></div>' +
+        '<div class="box"><div class="lab">Rata mensile</div><div class="num">' + fmtEur(rataInfo) + '</div></div>' +
+        '<div class="box"><div class="lab">Beneficio mensile primo anno</div><div class="num">' + fmtEur(benMese) + '</div></div>' +
+        '<div class="box"><div class="lab">Differenza ogni mese</div><div class="num ' + (netto >= 0 ? 'pos' : 'neg') + '">' + (netto >= 0 ? '+' : '−') + fmtEur(Math.abs(netto)) + '</div></div>' +
+      '</div>' +
+      '<div class="bars2">' +
+        '<div class="bar-row"><span>Rata</span><div class="track"><div class="fill" style="width:' + (rataInfo / maxBar * 100) + '%;background:var(--muted)"></div></div><span class="n">' + fmtEur(rataInfo) + '</span></div>' +
+        '<div class="bar-row"><span>Beneficio</span><div class="track"><div class="fill" style="width:' + (benMese / maxBar * 100) + '%;background:var(--s-save)"></div></div><span class="n">' + fmtEur(benMese) + '</span></div>' +
+      '</div>' +
+      '<div class="cassa"><b>Cassa del condominio e tasche delle famiglie sono due cose diverse.</b> Dei ' + fmtEur(benMese) + ' al mese di benefici, ' + fmtEur(y1.detr / 12) + ' sono la detrazione fiscale: arriva a ogni famiglia nella dichiarazione dei redditi, per 10 anni, non nel conto del condominio. Guardando solo la cassa condominiale, il primo anno entrano ' + fmtEur((m.beneficioY1 - y1.om) / 12) + ' al mese (risparmio in bolletta + incentivi − manutenzione) contro una rata di ' + fmtEur(rataInfo) + ': <b>' + (cassaNetta >= 0 ? '+' : '−') + fmtEur(Math.abs(cassaNetta)) + ' al mese</b>' + (cassaNetta < 0 ? ', cioè ' + fmtEur(Math.abs(cassaNetta) * 12) + ' l\'anno da ripartire tra le famiglie, che intanto recuperano ' + fmtEur(y1.detr) + ' di tasse' : '') + '.</div>' +
+      '<p style="color:var(--muted);font-size:12.5px;margin-top:12px">Il beneficio mensile comprende risparmio in bolletta, energia condivisa e venduta, e la rata annuale di detrazione fiscale, al netto della manutenzione. Interessi e spese di incasso sull\'intera durata: ' + fmtEur(m.interessi) + '; spese iniziali (istruttoria + imposta sostitutiva 0,25%): ' + fmtEur(m.speseBanca) + '. La rata è calcolata con il metodo standard a mese commerciale; la banca conteggia i giorni effettivi, quindi la rata reale oscilla di qualche euro sopra e sotto questo valore (nella simulazione del 2025: tra 2.380 e 2.434 € su una rata teorica di 2.414 €).</p>';
+  }
+
+  function renderTable(m) {
+    const fin = m.fin;
+    const payIdx = fin ? m.paybackFin : m.paybackCassa;
+    const payYear = payIdx == null ? -1 : Math.ceil(payIdx) || 1;
+    const cols = fin ? 10 : 9;
+    let h = '<table><thead><tr><th>Anno</th><th>Produzione (kWh)</th><th>Risparmio bolletta</th><th>Energia condivisa</th><th>Vendita in rete</th><th>Detrazione</th><th>Manutenzione</th>' + (fin ? '<th>Rata</th>' : '') + '<th>Flusso netto</th><th>Cumulato</th></tr></thead><tbody>';
+    const esborso = fin ? m.esborsoFin : m.invest;
+    const esborsoLab = fin ? (m.acconto > 0 ? 'Acconto ' + fmtEur(m.acconto) + ' + spese bancarie ' + fmtEur(m.speseBanca) : 'Spese bancarie iniziali ' + fmtEur(m.speseBanca) + ', nessun acconto') : 'Pagamento dell\'impianto, IVA inclusa';
+    h += '<tr><td>Oggi</td><td colspan="' + (cols - 3) + '" style="text-align:left;color:var(--ink-2)">' + esborsoLab + '</td><td class="neg">−' + fmtEur(esborso) + '</td><td class="cum neg">−' + fmtEur(esborso) + '</td></tr>';
+    let tot = { prod: 0, risparmio: 0, auc: 0, vendita: 0, detr: 0, om: 0, rata: 0, flusso: -esborso };
+    m.rows.forEach(r => {
+      const fl = fin ? r.flussoFin : r.flussoCassa, cum = fin ? r.cumFin : r.cumCassa;
+      tot.prod += r.prod; tot.risparmio += r.risparmio; tot.auc += r.auc; tot.vendita += r.vendita; tot.detr += r.detr; tot.om += r.om; tot.rata += r.rataAnno; tot.flusso += fl;
+      h += '<tr' + (r.t === payYear ? ' class="pay"' : '') + '><td>' + r.t + '</td><td>' + fmtInt(r.prod) + '</td><td>' + fmtEur(r.risparmio) + '</td><td>' + fmtEur(r.auc) + '</td><td>' + fmtEur(r.vendita) + '</td><td>' + fmtEur(r.detr) + '</td><td class="neg">−' + fmtEur(r.om) + '</td>' + (fin ? '<td class="neg">' + (r.rataAnno ? '−' + fmtEur(r.rataAnno) : '—') + '</td>' : '') + '<td class="' + (fl < 0 ? 'neg' : '') + '">' + fmtEur(fl) + '</td><td class="cum' + (cum < 0 ? ' neg' : '') + '">' + fmtEur(cum) + '</td></tr>';
+    });
+    h += '</tbody><tfoot><tr><td>Totale ' + m.H + ' anni</td><td>' + fmtInt(tot.prod) + '</td><td>' + fmtEur(tot.risparmio) + '</td><td>' + fmtEur(tot.auc) + '</td><td>' + fmtEur(tot.vendita) + '</td><td>' + fmtEur(tot.detr) + '</td><td>−' + fmtEur(tot.om) + '</td>' + (fin ? '<td>−' + fmtEur(tot.rata) + '</td>' : '') + '<td>' + fmtEur(tot.flusso) + '</td><td>' + fmtEur(m.guadagno) + '</td></tr></tfoot></table>';
+    document.getElementById('tableWrap').innerHTML = h;
+  }
+
+  function renderAssump(m) {
+    const s = state;
+    const tag = { bill: '<span class="tag bill">bolletta 05/2026</span>', todo: '<span class="tag todo">da confermare</span>', norm: '<span class="tag norm">normativa</span>', ie: '<span class="tag bill">progetto IE 2025</span>', sipro: '<span class="tag bill">preventivo SIPRO 11/09/2026</span>' };
+    const col1 = [
+      ['Potenza impianto' + tag.sipro, fmtDec(s.kwp, 2) + ' kWp'],
+      ['Costo chiavi in mano (IVA escl.)' + tag.sipro, fmtEur(s.costo)],
+      ['Costi esclusi dal preventivo (IVA escl.)' + tag.todo, fmtEur(s.extra)],
+      ['IVA', fmtInt(s.iva) + '%'],
+      ['Investimento totale', fmtEur(m.invest)],
+      ['Producibilità' + tag.ie + tag.todo, fmtInt(s.resa) + ' kWh/kWp'],
+      ['Calo di resa annuo', fmtDec(s.degrado, 2) + '%'],
+      ['Manutenzione e assicurazione' + tag.todo, fmtEur(s.om) + '/anno (+2%/anno)'],
+      ['Orizzonte', m.H + ' anni']
+    ];
+    const col2 = [
+      ['Consumo annuo' + tag.bill, fmtInt(s.consumo) + ' kWh'],
+      ['Spesa annua (IVA escl.)' + tag.bill, fmtEur(s.spesa)],
+      ['Quote fisse non riducibili' + tag.bill, fmtEur(s.fissa)],
+      ['Prezzo energia evitabile (media annua, senza quote fisse)', fmtDec(m.pEvit, 4) + ' €/kWh + IVA'],
+      ['Rincaro energia', fmtDec(s.rincaro, 1) + '%/anno'],
+      ['Energia consumata sul posto (calcolata dalle fasce F1/F2/F3)' + tag.bill, fmtInt(s.autoconsumo) + '%'],
+      ['Eccesso condiviso in AUC', fmtInt(s.condivisa) + '%'],
+      ['Tariffa premio GSE (20 anni)' + tag.norm, fmtDec(s.premio, 3) + ' €/kWh'],
+      ['Restituzione ARERA' + tag.norm, fmtDec(s.restituzione, 3) + ' €/kWh'],
+      ['Vendita eccesso in rete', fmtDec(s.vendita, 3) + ' €/kWh'],
+      ['Detrazione fiscale (10 rate)' + tag.norm, fmtInt(s.detrazione) + '%'],
+      ['Pagamento', s.pagamento === 'finanziamento' ? 'acconto ' + fmtInt(s.acconto) + '% · finanziati ' + fmtEur(m.finanziato) : 'tutto in cassa'],
+      ['Condizioni banca' + tag.bill.replace('bolletta 05/2026', 'simulazione 12/2025'), s.pagamento === 'finanziamento' ? 'tasso ' + s.tipoTasso + ' ' + fmtDec(s.tasso, 2) + '% · ' + fmtInt(s.durata) + ' mesi · istruttoria ' + fmtEur(s.istruttoria) + ' · imposta 0,25% · 2,75 €/rata' : '—'],
+      ['Famiglie (unità abitative, box esclusi)', fmtInt(s.unita)]
+    ];
+    const dl = rows => '<dl>' + rows.map(r => '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>').join('') + '</dl>';
+    document.getElementById('assump').innerHTML = '<div><h3>Impianto</h3>' + dl(col1) + '</div><div><h3>Energia, incentivi e pagamento</h3>' + dl(col2) + '</div>';
+  }
+
+  /* ---------------- Wire up ---------------- */
+  document.getElementById('btnReset').addEventListener('click', () => { state = Object.assign({}, DEFAULTS); onChange(); });
+  document.getElementById('btnShare').addEventListener('click', () => {
+    const btn = document.getElementById('btnShare'), url = location.href;
+    const done = () => { btn.textContent = 'Link copiato'; setTimeout(() => { btn.textContent = 'Copia link'; }, 2000); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => window.prompt('Copia questo link:', url));
+    else window.prompt('Copia questo link:', url);
+  });
+  let resizeTimer = null;
+  window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => renderCum(compute(state)), 150); });
+  document.querySelectorAll('[data-preset]').forEach(b => b.addEventListener('click', () => { state = Object.assign({}, PRESETS[b.dataset.preset]); onChange(); }));
+
+  buildSidebar();
+  // Su telefono le variabili stanno in fondo, con i gruppi chiusi: chi legge vede prima i numeri
+  if (window.matchMedia && window.matchMedia('(max-width: 960px)').matches) {
+    groupsEl.querySelectorAll('details.group').forEach(d => { d.open = false; });
+  }
+  syncSidebar(false);
+  render();
+})();
+</script>
